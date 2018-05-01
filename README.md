@@ -1,5 +1,5 @@
 # SteamWebAPI
-Steam Web API for Delphi
+Add the uSteamWebAPI.pas to your project and uses then enjoy.
 
 # Supported:
 
