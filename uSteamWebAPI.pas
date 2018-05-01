@@ -28,7 +28,7 @@ interface
 
 uses
   System.SysUtils, IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient,
-  IdHTTP;
+  IdHTTP, System.Classes;
 
 type
   TPlayerService = class(TObject)
@@ -42,6 +42,25 @@ type
     function GetBadges(SteamID: string): string;
     function GetCommunityBadgeProgress(SteamID, BadgeID: string): string;
     function IsPlayingSharedGame(SteamID, AppID_Playing: string): string;
+    function RecordOfflinePlaytime(SteamID, Ticket, Play_Sessions: string): string;
+  end;
+
+type
+  TGameServersService = class(TObject)
+    private
+      fUserKey: string;
+    public
+      constructor Create(WebAPIKey: string);
+      function GetAccountList: string;
+      function CreateAccount(AppID, Memo: string): string;
+      function DeleteAccount(SteamID: string): string;
+      function SetMemo(SteamID, Memo: string): string;
+      function ResetLoginToken(SteamID: string): string;
+      function GetAccountPublicInfo(SteamID: string): string;
+      function QueryLoginToken(Login_Token: string): string;
+      function GetServerSteamIDsByIP(Server_IPs: string): string;
+      function GetServerIPsBySteamID(Server_SteamIDs: string): string;
+      function SetBanStatus(SteamID, Ban_Seconds: string; Banned: Boolean): string;
   end;
 
 implementation
@@ -168,6 +187,230 @@ begin
   finally
     Result := sdata;
     httpclient.Free;
+  end;
+end;
+
+function TPlayerService.RecordOfflinePlaytime(SteamID, Ticket,
+  Play_Sessions: string): string;
+var
+  sdata: string;
+  httpclient: TIdHTTP;
+  params: TStringList;
+begin
+  httpclient := TIdHTTP.Create(nil);
+  params := TStringList.Create;
+  try
+    params.Add('steamid=' + SteamID);
+    params.Add('ticket=' + Ticket);
+    params.Add('play_sessions=' + Play_Sessions);
+    sdata := httpclient.Post
+    ('http://api.steampowered.com/IPlayerService/RecordOfflinePlaytime/v1/' , params);
+  finally
+    Result := sdata;
+    httpclient.Free;
+    params.Free;
+  end;
+end;
+
+{ TGameServersService }
+
+constructor TGameServersService.Create(WebAPIKey: string);
+begin
+  fUserKey := WebAPIKey;
+end;
+
+function TGameServersService.CreateAccount(AppID, Memo: string): string;
+var
+  sdata: string;
+  httpclient: TIdHTTP;
+  params: TStringList;
+begin
+  httpclient := TIdHTTP.Create(nil);
+  params := TStringList.Create;
+  try
+    params.Add('key=' + fUserKey);
+    params.Add('appid=' + AppID);
+    params.Add('memo=' + Memo);
+    sdata := httpclient.Post
+    ('http://api.steampowered.com/IGameServersService/CreateAccount/v1' , params);
+  finally
+    Result := sdata;
+    httpclient.Free;
+    params.Free;
+  end;
+end;
+
+function TGameServersService.DeleteAccount(SteamID: string): string;
+var
+  sdata: string;
+  httpclient: TIdHTTP;
+  params: TStringList;
+begin
+  httpclient := TIdHTTP.Create(nil);
+  params := TStringList.Create;
+  try
+    params.Add('key=' + fUserKey);
+    params.Add('steamid=' + SteamID);
+    sdata := httpclient.Post
+    ('http://api.steampowered.com/IGameServersService/DeleteAccount/v1', params);
+  finally
+    Result := sdata;
+    httpclient.Free;
+    params.Free;
+  end;
+end;
+
+function TGameServersService.GetAccountList: string;
+var
+  sdata: string;
+  httpclient: TIdHTTP;
+begin
+  httpclient := TIdHTTP.Create(nil);
+  try
+    sdata := httpclient.Get
+    ('http://api.steampowered.com/IGameServersService/GetAccountList/v1' +
+    '?key=' + fUserKey
+    );
+  finally
+    Result := sdata;
+    httpclient.Free;
+  end;
+end;
+
+function TGameServersService.GetAccountPublicInfo(SteamID: string): string;
+var
+  sdata: string;
+  httpclient: TIdHTTP;
+begin
+  httpclient := TIdHTTP.Create(nil);
+  try
+    sdata := httpclient.Get
+    ('http://api.steampowered.com/IGameServersService/GetAccountPublicInfo/v1' +
+    '?key=' + fUserKey
+    + '&steamid=' + SteamID
+    );
+  finally
+    Result := sdata;
+    httpclient.Free;
+  end;
+end;
+
+function TGameServersService.GetServerIPsBySteamID(
+  Server_SteamIDs: string): string;
+var
+  sdata: string;
+  httpclient: TIdHTTP;
+begin
+  httpclient := TIdHTTP.Create(nil);
+  try
+    sdata := httpclient.Get
+    ('http://api.steampowered.com/IGameServersService/GetServerIPsBySteamID/v1' +
+    '?key=' + fUserKey
+    + '&server_steamids=' + Server_SteamIDs
+    );
+  finally
+    Result := sdata;
+    httpclient.Free;
+  end;
+end;
+
+function TGameServersService.GetServerSteamIDsByIP(Server_IPs: string): string;
+var
+  sdata: string;
+  httpclient: TIdHTTP;
+begin
+  httpclient := TIdHTTP.Create(nil);
+  try
+    sdata := httpclient.Get
+    ('http://api.steampowered.com/IGameServersService/GetServerSteamIDsByIP/v1' +
+    '?key=' + fUserKey
+    + '&server_ips=' + Server_IPs
+    );
+  finally
+    Result := sdata;
+    httpclient.Free;
+  end;
+end;
+
+function TGameServersService.QueryLoginToken(Login_Token: string): string;
+var
+  sdata: string;
+  httpclient: TIdHTTP;
+begin
+  httpclient := TIdHTTP.Create(nil);
+  try
+    sdata := httpclient.Get
+    ('http://api.steampowered.com/IGameServersService/QueryLoginToken/v1' +
+    '?key=' + fUserKey
+    + '&login_token=' + Login_Token
+    );
+  finally
+    Result := sdata;
+    httpclient.Free;
+  end;
+end;
+
+function TGameServersService.ResetLoginToken(SteamID: string): string;
+var
+  sdata: string;
+  httpclient: TIdHTTP;
+  params: TStringList;
+begin
+  httpclient := TIdHTTP.Create(nil);
+  params := TStringList.Create;
+  try
+    params.Add('key=' + fUserKey);
+    params.Add('steamid=' + SteamID);
+    sdata := httpclient.Post
+    ('http://api.steampowered.com/IGameServersService/ResetLoginToken/v1', params);
+  finally
+    Result := sdata;
+    httpclient.Free;
+    params.Free;
+  end;
+end;
+
+function TGameServersService.SetBanStatus(SteamID, Ban_Seconds: string;
+  Banned: Boolean): string;
+var
+  sdata: string;
+  httpclient: TIdHTTP;
+  params: TStringList;
+begin
+  httpclient := TIdHTTP.Create(nil);
+  params := TStringList.Create;
+  try
+    params.Add('key=' + fUserKey);
+    params.Add('steamid=' + SteamID);
+    params.Add('banned=' + BoolToStr(Banned));
+    params.Add('ban_seconds=' + Ban_Seconds);
+    sdata := httpclient.Post
+    ('https://partner.steam-api.com/IGameServersService/SetBanStatus/v1', params);
+  finally
+    Result := sdata;
+    httpclient.Free;
+    params.Free;
+  end;
+end;
+
+function TGameServersService.SetMemo(SteamID, Memo: string): string;
+var
+  sdata: string;
+  httpclient: TIdHTTP;
+  params: TStringList;
+begin
+  httpclient := TIdHTTP.Create(nil);
+  params := TStringList.Create;
+  try
+    params.Add('key=' + fUserKey);
+    params.Add('steamid=' + SteamID);
+    params.Add('memo=' + Memo);
+    sdata := httpclient.Post
+    ('http://api.steampowered.com/IGameServersService/SetMemo/v1', params);
+  finally
+    Result := sdata;
+    httpclient.Free;
+    params.Free;
   end;
 end;
 
