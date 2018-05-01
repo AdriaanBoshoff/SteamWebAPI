@@ -1,5 +1,5 @@
 # SteamWebAPI
-Add the uSteamWebAPI.pas to your project and uses then enjoy.
+Add the uSteamWebAPI.pas to your project and uses then enjoy. I would reccomend this as a parser https://github.com/thomaserlang/delphi-json
 
 # Supported:
 
