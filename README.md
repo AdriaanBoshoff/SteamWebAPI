@@ -7,6 +7,7 @@ Steam Web API for Delphi
 Refer: https://partner.steamgames.com/doc/webapi/IPlayerService
 
 ### Example:
+<b>Delphi Code</b>
 ```pascal
 procedure TForm1.btn1Click(Sender: TObject);
 var
@@ -17,4 +18,13 @@ begin
   mmo1.Text := steamapi.GetSteamLevel('76561198113034550'); 
   steamapi.Free;
 end;
+```
+
+<b>Json Response</b>
+```json
+{  
+   "response":{  
+      "player_level":34
+   }
+}
 ```
