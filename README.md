@@ -40,7 +40,7 @@ var
   steamapi: TGameServersService;
 begin
   mmo1.WordWrap := True;
-  steamapi := TGameServersService.Create(API_KEY);
+  steamapi := TGameServersService.Create('F03F1797000F71B5391DA0EF04795C1A');
   mmo1.Text := steamapi.CreateAccount('252490','This is the memo text');
   steamapi.Free;
 end;
