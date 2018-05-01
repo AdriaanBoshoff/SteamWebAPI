@@ -28,3 +28,20 @@ end;
    }
 }
 ```
+
+## IGameServersService Interface
+Refer: https://partner.steamgames.com/doc/webapi/IGameServersService
+
+### Example:
+<b>Delphi Code</b>
+```pascal
+procedure TForm1.btn1Click(Sender: TObject);
+var
+  steamapi: TGameServersService;
+begin
+  mmo1.WordWrap := True;
+  steamapi := TGameServersService.Create(API_KEY);
+  mmo1.Text := steamapi.CreateAccount('252490','This is the memo text');
+  steamapi.Free;
+end;
+```
