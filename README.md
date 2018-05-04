@@ -45,3 +45,6 @@ begin
   steamapi.Free;
 end;
 ```
+
+## ISteamApps Interface
+Refer: https://partner.steamgames.com/doc/webapi/ISteamApps
