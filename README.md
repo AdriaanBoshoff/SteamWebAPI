@@ -2,7 +2,7 @@
 Add the uSteamWebAPI.pas to your project and uses then enjoy. I would reccomend this as a parser https://github.com/thomaserlang/delphi-json
 
 ### Notes:
-All API calls are over SSL. You can get the latest ssl libraries here: https://indy.fulgan.com/SSL/
+All API calls are made over SSL. You can get the latest ssl libraries here: https://indy.fulgan.com/SSL/
 
 # Supported:
 
